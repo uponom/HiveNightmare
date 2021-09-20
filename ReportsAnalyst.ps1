@@ -24,10 +24,12 @@ foreach ($f in (Get-childItem -LiteralPath $ReportsPath -File)) {
 }
 '='*100
 $Results | sort permissions, name, VSCRemoved
-"Reports count: $($Results.Count)"
+$TotalWs = (Get-ADComputer -Filter {enabled -eq $true} -SearchBase 'OU=Desktops,OU=Computers,OU=HOME24,DC=HOME24,DC=LAN' | measure).Count
+"Total numbers of workstations: $TotalWs"
+"Reports are collected from $($Results.Count) ($([math]::Round($Results.Count/$TotalWs*1000)/10)% of all workstations):"
 $FixedPerms = ($Results | ? Permissions -eq 'Ok').Count
-"Permissions fixed: $FixedPerms ($($FixedPerms*100/$Results.Count)%)"
+"`t- Permissions fixed: $FixedPerms ($([math]::Round($FixedPerms*1000/$Results.Count)/10)%)"
 $FixVSC = ($Results | ? VSCRemoved -eq 'Ok').Count
-"VSC cleaned: $FixVSC ($($FixVSC*100/$Results.Count)%)"
-"Total VSC fixed: $VSSErrorFixed"
+"`t- VSC cleaned: $FixVSC ($([math]::Round($FixVSC*1000/$Results.Count)/10)%)"
+"`t- Total VSC fixed: $VSSErrorFixed"
 $Results | Export-Csv -LiteralPath c:\tmp\ReportsAnalyse.csv -Encoding unicode -Force -Delimiter ','
