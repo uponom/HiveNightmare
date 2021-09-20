@@ -24,5 +24,10 @@ foreach ($f in (Get-childItem -LiteralPath $ReportsPath -File)) {
 }
 '='*100
 $Results | sort permissions, name, VSCRemoved
+"Reports count: $($Results.Count)"
+$FixedPerms = ($Results | ? Permissions -eq 'Ok').Count
+"Permissions fixed: $FixedPerms ($($FixedPerms*100/$Results.Count)%)"
+$FixVSC = ($Results | ? VSCRemoved -eq 'Ok').Count
+"VSC cleaned: $FixVSC ($($FixVSC*100/$Results.Count)%)"
 "Total VSC fixed: $VSSErrorFixed"
 $Results | Export-Csv -LiteralPath c:\tmp\ReportsAnalyse.csv -Encoding unicode -Force -Delimiter ','
